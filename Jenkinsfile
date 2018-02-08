@@ -14,6 +14,7 @@ node('maven') {
     sh "${mvnCmd} test"
   stage 'deployInDev'
     sh "rm -rf oc-build && mkdir -p oc-build/deployments"
+  echo "target"
     sh "cp target/openshift-tasks.war oc-build/deployments/ROOT.war"
     // clean up. keep the image stream
     sh "oc project ${devProject}"
