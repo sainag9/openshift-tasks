@@ -35,6 +35,13 @@
             sh "${mvnCmd} org.sonarsource.scanner.maven:sonar-maven-plugin:3.4.0.905:sonar -Dsonar.host.url=http://sonarqube-xyz-jenkins.apps.rhocp.com/ -Dsonar.projectName=${JOB_BASE_NAME}"
   
 	   }
+		
+	    stage('Publish to Nexus') {
+            echo "Publish to Nexus"
+
+          // Replace xyz-nexus with the name of your project
+            sh "${mvnCmd} deploy -DskipTests=true -DaltDeploymentRepository=nexus::default::http://nexus3.xyz-nexus.svc.cluster.local:8081/repository/releases"
+  }
 	  stage('Build OpenShift Image') {
 	    def newTag = "TestingCandidate-${version}"
 	    echo "New Tag: ${newTag}"
