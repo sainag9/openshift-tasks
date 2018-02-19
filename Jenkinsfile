@@ -34,7 +34,7 @@
           // Replace xyz-sonarqube with the name of your project
             sh "${mvnCmd} sonar:sonar -Dsonar.host.url=http://sonarqube-xyz-jenkins.apps.rhocp.com/ -Dsonar.projectName=${JOB_BASE_NAME}"
   
-	
+	   }
 	  stage('Build OpenShift Image') {
 	    def newTag = "TestingCandidate-${version}"
 	    echo "New Tag: ${newTag}"
