@@ -3,7 +3,7 @@
 	node('maven') {
 	  // Make sure your nexus_openshift_settings.xml
 	  // Is pointing to your nexus instance
-	  def mvnCmd = "mvn -s ./nexus_openshift_settings.xml"
+	  def mvnCmd = "mvn -s configuration/cicd-settings.xml"
 	
 	  stage('Checkout Source') {
 	    // Get Source Code from SCM (Git) as configured in the Jenkins Project
@@ -40,8 +40,9 @@
             echo "Publish to Nexus"
 
           // Replace xyz-nexus with the name of your project
-            sh "${mvnCmd} deploy -DskipTests=true -DaltDeploymentRepository=nexus::default::http://nexus3.xyz-nexus.svc.cluster.local:8081/repository/releases"
-  }
+          //  sh "${mvnCmd} deploy -DskipTests=true -DaltDeploymentRepository=nexus::default::http://nexus3.xyz-nexus.svc.cluster.local:8081/repository/releases"
+              sh "${mvnCmd} deploy -DskipTests=true"
+	    }
 	  stage('Build OpenShift Image') {
 	    def newTag = "TestingCandidate-${version}"
 	    echo "New Tag: ${newTag}"
