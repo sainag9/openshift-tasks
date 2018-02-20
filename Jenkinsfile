@@ -11,7 +11,7 @@
 	    //git 'http://gogs.xyz-gogs.svc.cluster.local:3000/CICDLabs/openshift-tasks.git'
 	    checkout scm
 	  }
-
+	
 	  // The following variables need to be defined at the top level and not inside
 	  // the scope of a stage - otherwise they would not be accessible from other stages.
 	  // Extract version and other properties from the pom.xml
@@ -28,34 +28,8 @@
 	    echo "Unit Tests"
 	    sh "${mvnCmd} test"
 	  }
-		
-		
-  //stage('JIRA') {
-   // def searchResults = jiraJqlSearch jql: "project = jira1 AND issuekey = 'issue1'"
-    //def issues = searchResults.data.issues
-   // for (i = 0; i <issues.size(); i++) {
-//def fixVersion = jiraNewVersion version: [name: "new-fix-version-1.0",
-   //                                             project: "jira1"]
-   //   def testIssue = [fields: [fixVersions: [fixVersion.data]]]
-   //   response = jiraEditIssue idOrKey: issues[i].key, issue: testIssue
- //   }
-//  }
-//}//
-	   stage('Code Analysis') {
-            echo "Code Analysis"
-
-          // Replace xyz-sonarqube with the name of your project
-            sh "${mvnCmd} org.sonarsource.scanner.maven:sonar-maven-plugin:3.4.0.905:sonar -Dsonar.host.url=http://sonarqube-xyz-jenkins.apps.rhocp.com/ -Dsonar.projectName=${JOB_BASE_NAME}"
-  
-	   }
-		
-	    stage('Publish to Nexus') {
-            echo "Publish to Nexus"
-
-          // Replace xyz-nexus with the name of your project
-          //  sh "${mvnCmd} deploy -DskipTests=true -DaltDeploymentRepository=nexus::default::http://nexus3.xyz-nexus.svc.cluster.local:8081/repository/releases"
-              sh "${mvnCmd} deploy -DskipTests=true"
-	    }
+	  
+	
 	  stage('Build OpenShift Image') {
 	    def newTag = "TestingCandidate-${version}"
 	    echo "New Tag: ${newTag}"
