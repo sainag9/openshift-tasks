@@ -23,7 +23,7 @@ description: "New JIRA Created from Jenkins.",
 response = jiraNewIssue issue: testIssue
     echo response.successful.toString()
 echo response.data.toString()
-}
+}}
 	  // The following variables need to be defined at the top level and not inside
 	  // the scope of a stage - otherwise they would not be accessible from other stages.
 	  // Extract version and other properties from the pom.xml
