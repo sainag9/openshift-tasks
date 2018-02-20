@@ -11,7 +11,19 @@
 	    //git 'http://gogs.xyz-gogs.svc.cluster.local:3000/CICDLabs/openshift-tasks.git'
 	    checkout scm
 	  }
-	
+		stage('JIRA') {
+			echo "Connecting with jira"
+withEnv(['JIRA_SITE=https://avijitpattanaik.atlassian.net']) {
+def testIssue = [fields: [ project: [id: 10000],
+summary: "New JIRA Created from Jenkins.",
+description: "New JIRA Created from Jenkins.",
+                   issuetype: [id: 3],
+                   "customfield_10200": { "name": "ABC" } 
+ ]]            
+response = jiraNewIssue issue: testIssue
+    echo response.successful.toString()
+echo response.data.toString()
+}
 	  // The following variables need to be defined at the top level and not inside
 	  // the scope of a stage - otherwise they would not be accessible from other stages.
 	  // Extract version and other properties from the pom.xml
