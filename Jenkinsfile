@@ -28,7 +28,15 @@
 	    echo "Unit Tests"
 	    sh "${mvnCmd} test"
 	  }
-	  
+	  stage('Code Analysis') {
+            echo "Code Analysis"
+
+          // Replace xyz-sonarqube with the name of your project
+            sh "${mvnCmd} org.sonarsource.scanner.maven:sonar-maven-plugin:3.4.0.905:sonar -
+
+Dsonar.host.url=http://sonarqube-xyz-jenkins.apps.rhocp.com/ -Dsonar.projectName=${JOB_BASE_NAME}"
+  
+	   }
 	
 	  stage('Build OpenShift Image') {
 	    def newTag = "TestingCandidate-${version}"
