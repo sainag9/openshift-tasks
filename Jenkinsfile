@@ -1,4 +1,4 @@
-// Run this node on a Maven Slave
+// Run this node on a Maven Slave edit
 	// Maven Slaves have JDK and Maven already installed
 	node('maven') {
 	  // Make sure your nexus_openshift_settings.xml
