@@ -14,7 +14,7 @@
 			node {
   stage('JIRA') {
     // Look at IssueInput class for more information.
-  jiraComment body: 'ok', issueKey: 'issue1'
+  jiraComment body: 'ok', issueKey: '10000'
  
   }}
 	  // The following variables need to be defined at the top level and not inside
