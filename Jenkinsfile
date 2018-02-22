@@ -16,7 +16,7 @@
     // Look at IssueInput class for more information.
   jiraComment body: 'ok', issueKey: 'issue1'
  
-}
+  }}
 	  // The following variables need to be defined at the top level and not inside
 	  // the scope of a stage - otherwise they would not be accessible from other stages.
 	  // Extract version and other properties from the pom.xml
