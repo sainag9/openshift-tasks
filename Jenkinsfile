@@ -1,4 +1,4 @@
-// Run this node on a Maven Slave edit
+// Run this node on a Maven Slave
 	// Maven Slaves have JDK and Maven already installed
 	node('maven') {
 	  // Make sure your nexus_openshift_settings.xml
@@ -11,12 +11,7 @@
 	    //git 'http://gogs.xyz-gogs.svc.cluster.local:3000/CICDLabs/openshift-tasks.git'
 	    checkout scm
 	  }
-			node {
-  stage('JIRA') {
-    // Look at IssueInput class for more information.
-  jiraComment body: 'ok', issueKey: '10000'
- 
-  }}
+	
 	  // The following variables need to be defined at the top level and not inside
 	  // the scope of a stage - otherwise they would not be accessible from other stages.
 	  // Extract version and other properties from the pom.xml
@@ -33,14 +28,7 @@
 	    echo "Unit Tests"
 	    sh "${mvnCmd} test"
 	  }
-		
-
-	  stage('Code Analysis') {
-            echo "Code Analysis"
-
-          // Replace xyz-sonarqube with the name of your project
-           sh "${mvnCmd} org.sonarsource.scanner.maven:sonar-maven-plugin:3.4.0.905:sonar -Dsonar.host.url=http://sonarqube-xyz-jenkins.apps.rhocp.com/ -Dsonar.projectName=${JOB_BASE_NAME}" 
-		   }
+	  
 	
 	  stage('Build OpenShift Image') {
 	    def newTag = "TestingCandidate-${version}"
@@ -57,7 +45,17 @@
 	    openshiftTag alias: 'false', destStream: 'tasks', destTag: newTag, destinationNamespace: 'xyz-tasks-dev2', namespace: 'xyz-tasks-dev2', srcStream: 'tasks', srcTag: 'latest', verbose: 'false'
 	  }
 	
-	  stage('Deploy to Dev') {
+	  node {
+  stage('JIRA') {
+    // Look at IssueInput class for more information.
+  jiraComment body: 'ok', issueKey: '10000'
+ 
+  }}stage('Code Analysis') {
+            echo "Code Analysis"
+
+          // Replace xyz-sonarqube with the name of your project
+           sh "${mvnCmd} org.sonarsource.scanner.maven:sonar-maven-plugin:3.4.0.905:sonar -Dsonar.host.url=http://sonarqube-xyz-jenkins.apps.rhocp.com/ -Dsonar.projectName=${JOB_BASE_NAME}" 
+		   }stage('Deploy to Dev') {
 	    // Patch the DeploymentConfig so that it points to the latest TestingCandidate-${version} Image.
 	    // Replace xyz-tasks-dev2 with the name of your dev project
 	    sh "oc project xyz-tasks-dev2"
@@ -77,9 +75,7 @@
 	
 	    // Replace xyz-tasks-dev2 with the name of your dev project
 	    openshiftTag alias: 'false', destStream: 'tasks', destTag: newTag, destinationNamespace: 'xyz-tasks-dev2', namespace: 'xyz-tasks-dev2', srcStream: 'tasks', srcTag: 'latest', verbose: 'false'
-	  }
-	
-	  // Blue/Green Deployment into Production
+	  }// Blue/Green Deployment into Production
 	  // -------------------------------------
 	  def dest   = "tasks-green"
 	  def active = ""
@@ -118,8 +114,7 @@
 	    sh 'oc get route tasks -n xyz-tasks-prod > oc_out.txt'
 	    oc_out = readFile('oc_out.txt')
 	    echo "Current route configuration: " + oc_out
-	  }
-	}
+	  }}
 	
 	// Convenience Functions to read variables from the pom.xml
 	def getVersionFromPom(pom) {
