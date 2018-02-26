@@ -11,7 +11,7 @@
 	    //git 'http://gogs.xyz-gogs.svc.cluster.local:3000/CICDLabs/openshift-tasks.git'
 	    checkout scm
 	  }
-			node {
+			
   
 	  // The following variables need to be defined at the top level and not inside
 	  // the scope of a stage - otherwise they would not be accessible from other stages.
@@ -37,7 +37,7 @@
           // Replace xyz-sonarqube with the name of your project
            sh "${mvnCmd} org.sonarsource.scanner.maven:sonar-maven-plugin:3.4.0.905:sonar -Dsonar.host.url=http://sonarqube-xyz-jenkins.apps.rhocp.com/ -Dsonar.projectName=${JOB_BASE_NAME}"
 		   }
-				
+			node {	
 	  stage('JIRA') {
     // Look at IssueInput class for more information.
   jiraComment body: 'ok', issueKey: '10000'
