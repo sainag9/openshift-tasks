@@ -1,4 +1,4 @@
-// Run this node on a Maven Slave
+// Run this node on a Maven Slave edit
 	// Maven Slaves have JDK and Maven already installed
 	node('maven') {
 	  // Make sure your nexus_openshift_settings.xml
@@ -11,7 +11,12 @@
 	    //git 'http://gogs.xyz-gogs.svc.cluster.local:3000/CICDLabs/openshift-tasks.git'
 	    checkout scm
 	  }
-	
+			node {
+  stage('JIRA') {
+    // Look at IssueInput class for more information.
+  jiraComment body: 'ok', issueKey: '10000'
+ 
+  }}
 	  // The following variables need to be defined at the top level and not inside
 	  // the scope of a stage - otherwise they would not be accessible from other stages.
 	  // Extract version and other properties from the pom.xml
@@ -28,7 +33,14 @@
 	    echo "Unit Tests"
 	    sh "${mvnCmd} test"
 	  }
-	  
+		
+
+	  stage('Code Analysis') {
+            echo "Code Analysis"
+
+          // Replace xyz-sonarqube with the name of your project
+           sh "${mvnCmd} org.sonarsource.scanner.maven:sonar-maven-plugin:3.4.0.905:sonar -Dsonar.host.url=http://sonarqube-xyz-jenkins.apps.rhocp.com/ -Dsonar.projectName=${JOB_BASE_NAME}" 
+		   }
 	
 	  stage('Build OpenShift Image') {
 	    def newTag = "TestingCandidate-${version}"
@@ -38,32 +50,22 @@
 	    sh "cp ./target/openshift-tasks.war ./ROOT.war"
 	
 	    // Start Binary Build in OpenShift using the file we just published
-	    // Replace xyz-tasks-dev2 with the name of your dev project
-	    sh "oc project xyz-tasks-dev2"
-	    sh "oc start-build tasks --follow --from-file=./ROOT.war -n xyz-tasks-dev2"
+	    // Replace xyz-tasks-dev with the name of your dev project
+	    sh "oc project xyz-tasks-dev"
+	    sh "oc start-build tasks --follow --from-file=./ROOT.war -n xyz-tasks-dev"
 	
-	    openshiftTag alias: 'false', destStream: 'tasks', destTag: newTag, destinationNamespace: 'xyz-tasks-dev2', namespace: 'xyz-tasks-dev2', srcStream: 'tasks', srcTag: 'latest', verbose: 'false'
+	    openshiftTag alias: 'false', destStream: 'tasks', destTag: newTag, destinationNamespace: 'xyz-tasks-dev', namespace: 'xyz-tasks-dev', srcStream: 'tasks', srcTag: 'latest', verbose: 'false'
 	  }
 	
-	  node {
-  stage('JIRA') {
-    // Look at IssueInput class for more information.
-  jiraComment body: 'ok', issueKey: '10000'
- 
-  }}stage('Code Analysis') {
-            echo "Code Analysis"
-
-          // Replace xyz-sonarqube with the name of your project
-           sh "${mvnCmd} org.sonarsource.scanner.maven:sonar-maven-plugin:3.4.0.905:sonar -Dsonar.host.url=http://sonarqube-xyz-jenkins.apps.rhocp.com/ -Dsonar.projectName=${JOB_BASE_NAME}" 
-		   }stage('Deploy to Dev') {
+	  stage('Deploy to Dev') {
 	    // Patch the DeploymentConfig so that it points to the latest TestingCandidate-${version} Image.
-	    // Replace xyz-tasks-dev2 with the name of your dev project
-	    sh "oc project xyz-tasks-dev2"
-	    sh "oc patch dc tasks --patch '{\"spec\": { \"triggers\": [ { \"type\": \"ImageChange\", \"imageChangeParams\": { \"containerNames\": [ \"tasks\" ], \"from\": { \"kind\": \"ImageStreamTag\", \"namespace\": \"xyz-tasks-dev2\", \"name\": \"tasks:TestingCandidate-$version\"}}}]}}' -n xyz-tasks-dev2"
+	    // Replace xyz-tasks-dev with the name of your dev project
+	    sh "oc project xyz-tasks-dev"
+	    sh "oc patch dc tasks --patch '{\"spec\": { \"triggers\": [ { \"type\": \"ImageChange\", \"imageChangeParams\": { \"containerNames\": [ \"tasks\" ], \"from\": { \"kind\": \"ImageStreamTag\", \"namespace\": \"xyz-tasks-dev\", \"name\": \"tasks:TestingCandidate-$version\"}}}]}}' -n xyz-tasks-dev"
 	
-	    openshiftDeploy depCfg: 'tasks', namespace: 'xyz-tasks-dev2', verbose: 'false', waitTime: '', waitUnit: 'sec'
-	    openshiftVerifyDeployment depCfg: 'tasks', namespace: 'xyz-tasks-dev2', replicaCount: '1', verbose: 'false', verifyReplicaCount: 'false', waitTime: '', waitUnit: 'sec'
-	    openshiftVerifyService namespace: 'xyz-tasks-dev2', svcName: 'tasks', verbose: 'false'
+	    openshiftDeploy depCfg: 'tasks', namespace: 'xyz-tasks-dev', verbose: 'false', waitTime: '', waitUnit: 'sec'
+	    openshiftVerifyDeployment depCfg: 'tasks', namespace: 'xyz-tasks-dev', replicaCount: '1', verbose: 'false', verifyReplicaCount: 'false', waitTime: '', waitUnit: 'sec'
+	    openshiftVerifyService namespace: 'xyz-tasks-dev', svcName: 'tasks', verbose: 'false'
 	  }
 	
 	  stage('Integration Test') {
@@ -73,15 +75,17 @@
 	    def newTag = "ProdReady-${version}"
 	    echo "New Tag: ${newTag}"
 	
-	    // Replace xyz-tasks-dev2 with the name of your dev project
-	    openshiftTag alias: 'false', destStream: 'tasks', destTag: newTag, destinationNamespace: 'xyz-tasks-dev2', namespace: 'xyz-tasks-dev2', srcStream: 'tasks', srcTag: 'latest', verbose: 'false'
-	  }// Blue/Green Deployment into Production
+	    // Replace xyz-tasks-dev with the name of your dev project
+	    openshiftTag alias: 'false', destStream: 'tasks', destTag: newTag, destinationNamespace: 'xyz-tasks-dev', namespace: 'xyz-tasks-dev', srcStream: 'tasks', srcTag: 'latest', verbose: 'false'
+	  }
+	
+	  // Blue/Green Deployment into Production
 	  // -------------------------------------
 	  def dest   = "tasks-green"
 	  def active = ""
 	
 	  stage('Prep Production Deployment') {
-	    // Replace xyz-tasks-dev2 and xyz-tasks-prod with
+	    // Replace xyz-tasks-dev and xyz-tasks-prod with
 	    // your project names
 	    sh "oc project xyz-tasks-prod"
 	    sh "oc get route tasks -n xyz-tasks-prod -o jsonpath='{ .spec.to.name }' > activesvc.txt"
@@ -97,9 +101,9 @@
 	
 	    // Patch the DeploymentConfig so that it points to
 	    // the latest ProdReady-${version} Image.
-	    // Replace xyz-tasks-dev2 and xyz-tasks-prod with
+	    // Replace xyz-tasks-dev and xyz-tasks-prod with
 	    // your project names.
-	    sh "oc patch dc ${dest} --patch '{\"spec\": { \"triggers\": [ { \"type\": \"ImageChange\", \"imageChangeParams\": { \"containerNames\": [ \"$dest\" ], \"from\": { \"kind\": \"ImageStreamTag\", \"namespace\": \"xyz-tasks-dev2\", \"name\": \"tasks:ProdReady-$version\"}}}]}}' -n xyz-tasks-prod"
+	    sh "oc patch dc ${dest} --patch '{\"spec\": { \"triggers\": [ { \"type\": \"ImageChange\", \"imageChangeParams\": { \"containerNames\": [ \"$dest\" ], \"from\": { \"kind\": \"ImageStreamTag\", \"namespace\": \"xyz-tasks-dev\", \"name\": \"tasks:ProdReady-$version\"}}}]}}' -n xyz-tasks-prod"
 	
 	    openshiftDeploy depCfg: dest, namespace: 'xyz-tasks-prod', verbose: 'false', waitTime: '', waitUnit: 'sec'
 	    openshiftVerifyDeployment depCfg: dest, namespace: 'xyz-tasks-prod', replicaCount: '1', verbose: 'false', verifyReplicaCount: 'true', waitTime: '', waitUnit: 'sec'
@@ -114,7 +118,8 @@
 	    sh 'oc get route tasks -n xyz-tasks-prod > oc_out.txt'
 	    oc_out = readFile('oc_out.txt')
 	    echo "Current route configuration: " + oc_out
-	  }}
+	  }
+	}
 	
 	// Convenience Functions to read variables from the pom.xml
 	def getVersionFromPom(pom) {
