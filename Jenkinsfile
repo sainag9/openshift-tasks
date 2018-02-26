@@ -12,11 +12,7 @@
 	    checkout scm
 	  }
 			node {
-  stage('JIRA') {
-    // Look at IssueInput class for more information.
-  jiraComment body: 'ok', issueKey: '10000'
- 
-  }}
+  
 	  // The following variables need to be defined at the top level and not inside
 	  // the scope of a stage - otherwise they would not be accessible from other stages.
 	  // Extract version and other properties from the pom.xml
@@ -41,6 +37,12 @@
           // Replace xyz-sonarqube with the name of your project
            sh "${mvnCmd} org.sonarsource.scanner.maven:sonar-maven-plugin:3.4.0.905:sonar -Dsonar.host.url=http://sonarqube-xyz-jenkins.apps.rhocp.com/ -Dsonar.projectName=${JOB_BASE_NAME}"
 		   }
+				
+	  stage('JIRA') {
+    // Look at IssueInput class for more information.
+  jiraComment body: 'ok', issueKey: '10000'
+ 
+  }}
 	
 	  stage('Build OpenShift Image') {
 	    def newTag = "TestingCandidate-${version}"
