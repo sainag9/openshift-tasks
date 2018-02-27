@@ -39,7 +39,7 @@
 		   }
 			node {	
 	  stage('JIRA') {
-     Look at IssueInput class for more information.
+     //Look at IssueInput class for more information.
   jiraComment body: 'testcase executed successfully', issueKey: '10000'
  
   }}
