@@ -38,11 +38,11 @@
            //sh "${mvnCmd} org.sonarsource.scanner.maven:sonar-maven-plugin:3.4.0.905:sonar -Dsonar.host.url=http://sonarqube-abc-jenkins.apps.rhocp.com/ -Dsonar.projectName=${JOB_BASE_NAME}"
 		   //}
 			node {	
-	  stage('JIRA') {
+	  //stage('JIRA') {
     // Look at IssueInput class for more information.
-  jiraComment body: 'testcase executed successfully', issueKey: '10000'
+  //jiraComment body: 'testcase executed successfully', issueKey: '10000'
  
-  }}
+ // }}
 	
 	  stage('Build OpenShift Image') {
 	    def newTag = "TestingCandidate-${version}"
