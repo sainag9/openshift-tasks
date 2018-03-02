@@ -122,3 +122,11 @@
 	  def matcher = readFile(pom) =~ '<artifactId>(.+)</artifactId>'
 	  matcher ? matcher[0][1] : null
 }
+post { 
+        failure { 
+            mail bcc: '', body: "The deployment pipeline has failed. Review the job here - k.sai", cc: '', from: '', replyTo: '', subject: 'Deployment Status: Failed', to: 'k.sainagarjuna11@gmail.com'
+        }
+        success { 
+            mail bcc: '', body: "The deployment pipeline completed successfully. The new version of the app can be accessed at the URL - http://ec2-13-126-180-206.ap-south-1.compute.amazonaws.com:3000/", cc: '', from: '', replyTo: '', subject: 'Deployment Status: Success', to: 'k.sainagarjuna11@gmail.com'
+        }
+    }
