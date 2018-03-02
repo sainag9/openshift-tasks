@@ -24,20 +24,24 @@
 	    echo "Building version ${version}"
 	
 	    sh "${mvnCmd} clean package -DskipTests"
-	  }stage('Unit Tests') {
+	  }
+	stage('Unit Tests') {
 	    echo "Unit Tests"
 	    sh "${mvnCmd} test"
-	  }stage('Code Analysis') {
+	  }
+	stage('Code Analysis') {
             echo "Code Analysis"
 
           // Replace xyz-sonarqube with the name of your project
            sh "${mvnCmd} org.sonarsource.scanner.maven:sonar-maven-plugin:3.4.0.905:sonar -Dsonar.host.url=http://sonarqube-xyz-jenkins.apps.rhocp.com/ -Dsonar.projectName=${JOB_BASE_NAME}"
-		   }node {	
+		   }
+		node {	
 	  stage('JIRA') {
     // Look at IssueInput class for more information.
   jiraComment body: 'ok', issueKey: '10000'
  
-  }}stage('Build OpenShift Image') {
+  }}
+	stage('Build OpenShift Image') {
 	    def newTag = "TestingCandidate-${version}"
 	    echo "New Tag: ${newTag}"
 	
@@ -50,7 +54,8 @@
 	    sh "oc start-build tasks --follow --from-file=./ROOT.war -n xyz-tasks-dev2"
 	
 	    openshiftTag alias: 'false', destStream: 'tasks', destTag: newTag, destinationNamespace: 'xyz-tasks-dev2', namespace: 'xyz-tasks-dev2', srcStream: 'tasks', srcTag: 'latest', verbose: 'false'
-	  }stage('Deploy to Dev') {
+	  }
+	stage('Deploy to Dev') {
 	    // Patch the DeploymentConfig so that it points to the latest TestingCandidate-${version} Image.
 	    // Replace xyz-tasks-dev2 with the name of your dev project
 	    sh "oc project xyz-tasks-dev2"
@@ -59,7 +64,8 @@
 	    openshiftDeploy depCfg: 'tasks', namespace: 'xyz-tasks-dev2', verbose: 'false', waitTime: '', waitUnit: 'sec'
 	    openshiftVerifyDeployment depCfg: 'tasks', namespace: 'xyz-tasks-dev2', replicaCount: '1', verbose: 'false', verifyReplicaCount: 'false', waitTime: '', waitUnit: 'sec'
 	    openshiftVerifyService namespace: 'xyz-tasks-dev2', svcName: 'tasks', verbose: 'false'
-	  }stage('Integration Test') {
+	  }
+	stage('Integration Test') {
 	    // TBD: Proper test
 	    // Could use the OpenShift-Tasks REST APIs to make sure it is working as expected.
 	
