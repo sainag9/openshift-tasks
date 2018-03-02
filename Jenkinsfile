@@ -1,5 +1,6 @@
 // Run this node on a Maven Slave edit
 	// Maven Slaves have JDK and Maven already installed
+	pipeline {
 	node('maven') {
 	  // Make sure your nexus_openshift_settings.xml
 	  // Is pointing to your nexus instance
@@ -136,3 +137,4 @@ post {
             mail bcc: '', body: "The deployment pipeline completed successfully. The new version of the app can be accessed at the URL - http://ec2-13-126-180-206.ap-south-1.compute.amazonaws.com:3000/", cc: '', from: '', replyTo: '', subject: 'Deployment Status: Success', to: 'k.sainagarjuna11@gmail.com'
         }
     }
+}
