@@ -81,7 +81,7 @@ stage('Integration Test') {
 	  def active = ""
 	
 	  stage('Prep Production Deployment') {
-	    // Replace xyz-tasks-dev and xyz-tasks-prod with
+	    // Replace xyz-tasks-dev2 and xyz-tasks-prod with
 	    // your project names
 	    sh "oc project xyz-tasks-prod"
 	    sh "oc get route tasks -n xyz-tasks-prod -o jsonpath='{ .spec.to.name }' > activesvc.txt"
@@ -97,9 +97,9 @@ stage('Integration Test') {
 	
 	    // Patch the DeploymentConfig so that it points to
 	    // the latest ProdReady-${version} Image.
-	    // Replace xyz-tasks-dev and xyz-tasks-prod with
+	    // Replace xyz-tasks-dev2 and xyz-tasks-prod with
 	    // your project names.
-	    sh "oc patch dc ${dest} --patch '{\"spec\": { \"triggers\": [ { \"type\": \"ImageChange\", \"imageChangeParams\": { \"containerNames\": [ \"$dest\" ], \"from\": { \"kind\": \"ImageStreamTag\", \"namespace\": \"xyz-tasks-dev\", \"name\": \"tasks:ProdReady-$version\"}}}]}}' -n xyz-tasks-prod"
+	    sh "oc patch dc ${dest} --patch '{\"spec\": { \"triggers\": [ { \"type\": \"ImageChange\", \"imageChangeParams\": { \"containerNames\": [ \"$dest\" ], \"from\": { \"kind\": \"ImageStreamTag\", \"namespace\": \"xyz-tasks-dev2\", \"name\": \"tasks:ProdReady-$version\"}}}]}}' -n xyz-tasks-prod"
 	
 	    openshiftDeploy depCfg: dest, namespace: 'xyz-tasks-prod', verbose: 'false', waitTime: '', waitUnit: 'sec'
 	    openshiftVerifyDeployment depCfg: dest, namespace: 'xyz-tasks-prod', replicaCount: '1', verbose: 'false', verifyReplicaCount: 'true', waitTime: '', waitUnit: 'sec'
