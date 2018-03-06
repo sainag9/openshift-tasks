@@ -114,7 +114,6 @@
 	    oc_out = readFile('oc_out.txt')
 	    echo "Current route configuration: " + oc_out
 	  }
-	notifySuccessful()
 	}
 	
 	// Convenience Functions to read variables from the pom.xml
@@ -129,12 +128,4 @@
 	def getArtifactIdFromPom(pom) {
 	  def matcher = readFile(pom) =~ '<artifactId>(.+)</artifactId>'
 	  matcher ? matcher[0][1] : null
-}
-def notifySuccessful() {
-  emailext (
-      subject: "SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-      body: """<p>SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
-        <p>Check console output at "<a href="${env.BUILD_URL}">${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>"</p>""",
-      recipientProviders: [[$class: 'RequesterRecipientProvider']],to:'k.sainagarjuna11@gmail.com'
-    )
 }
