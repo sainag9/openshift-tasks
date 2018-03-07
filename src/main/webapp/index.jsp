@@ -65,13 +65,13 @@
             <div class="card-pf-body">
               <div style="text-align: center;">
                 <p>
-                  <button class="btn btn-warning btn-block" type="button" id="loginfo">Log Info</button>
+                  <button class="btn btn-primary btn-block" type="button" id="loginfo">Log Info</button>
                 </p>
                 <p>
-                  <button class="btn btn-warning btn-block" type="button" id="logwarning">Log Warning</button>
+                  <button class="btn btn-primary btn-block" type="button" id="logwarning">Log Warning</button>
                 </p>
                 <p>
-                  <button class="btn btn-warning btn-block" type="button" id="logerror">Log Error</button>
+                  <button class="btn btn-primary btn-block" type="button" id="logerror">Log Error</button>
                 </p>
               </div>
             </div>
@@ -94,7 +94,7 @@
                 </div>
                 <div class="form-group">
                   <div class="col-md-12">
-                    <button type="button" class="btn btn-warning btn-block" id="load">Load!</button>
+                    <button type="button" class="btn btn-primary btn-block" id="load">Load!</button>
                   </div>
                 </div>
               </form>
