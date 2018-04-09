@@ -52,7 +52,7 @@ stage('Deploy to Dev') {
 	
 	    openshiftDeploy depCfg: 'tasks', namespace: 'xyz-tasks-dev1', verbose: 'false', waitTime: '', waitUnit: 'sec'
 	    openshiftVerifyDeployment depCfg: 'tasks', namespace: 'xyz-tasks-dev1', replicaCount: '1', verbose: 'false', verifyReplicaCount: 'false', waitTime: '', waitUnit: 'sec'
-	    openshiftVerifyService namespace: 'xyz-tasks-dev1', svcName: 'tasks', verbose: 'false'
+	    //openshiftVerifyService namespace: 'xyz-tasks-dev1', svcName: 'tasks', verbose: 'false'
 	  }
 stage('Integration Test') {
 	    // TBD: Proper test
@@ -91,7 +91,7 @@ stage('Integration Test') {
 	
 	    openshiftDeploy depCfg: dest, namespace: 'xyz-tasks-prod', verbose: 'false', waitTime: '', waitUnit: 'sec'
 	    openshiftVerifyDeployment depCfg: dest, namespace: 'xyz-tasks-prod', replicaCount: '1', verbose: 'false', verifyReplicaCount: 'true', waitTime: '', waitUnit: 'sec'
-	    openshiftVerifyService namespace: 'xyz-tasks-prod', svcName: dest, verbose: 'false'
+	    //openshiftVerifyService namespace: 'xyz-tasks-prod', svcName: dest, verbose: 'false'
 	  }
 	  stage('Switch over to new Version') {
 	    input "Switch Production?"
