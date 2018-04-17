@@ -181,7 +181,7 @@
             <plugin>
                 <groupId>org.jboss.as.plugins</groupId>
                 <artifactId>jboss-as-maven-plugin</artifactId>
-                <version>${version.jboss.maven.plugi}</version>
+                <version>${version.jboss.maven.plugin}</version>
             </plugin>
 			<plugin>
 				<groupId>org.sonarsource.scanner.maven</groupId>
