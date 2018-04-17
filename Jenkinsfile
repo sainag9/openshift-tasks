@@ -34,7 +34,7 @@ stage('Code Analysis') {
  
         // Replace xyz-sonarqube with the name of your project
         // Replace xyz-sonarqube with the name of your projects
-            sh "${mvnCmd} org.sonarsource.scanner.maven:sonar-maven-plugin:3.3.0.603:sonar -Dsonar.host.url=http://sonarqube-xyz-jenkins.apps.rhocp.com/ -Dsonar.projectName=${JOB_BASE_NAME}"
+            sh "${mvnCmd} org.sonarsource.scanner.maven:sonar-maven-plugin:3.4.0.905:sonar -Dsonar.host.url=http://sonarqube-xyz-jenkins.apps.rhosp.com/ -Dsonar.projectName=${JOB_BASE_NAME}"
  	  }
 
 stage('Build OpenShift Image') {
