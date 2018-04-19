@@ -32,7 +32,7 @@ stage('Unit Tests') {
 node {
   stage('JIRA') {
     // Look at IssueInput class for more information.
-  jiraComment body: 'hi', issueKey: '10000'
+  jiraComment body: 'Test Case Executed Successfully', issueKey: '10000'
  
   }
 }
