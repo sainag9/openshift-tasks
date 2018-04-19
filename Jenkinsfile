@@ -75,10 +75,10 @@ stage('Integration Test') {
 	  def active = ""
 	
 	  stage('Prep Production Deployment') {
-	    // Replace xyz-tasks-dev1 and xyz-tasks-prod with
+	    // Replace xyz-tasks-dev1 and xyz-tasks-prod1 with
 	    // your project names
-	    sh "oc project xyz-tasks-prod"
-	    sh "oc get route tasks -n xyz-tasks-prod -o jsonpath='{ .spec.to.name }' > activesvc.txt"
+	    sh "oc project xyz-tasks-prod1"
+	    sh "oc get route tasks -n xyz-tasks-prod1 -o jsonpath='{ .spec.to.name }' > activesvc.txt"
 	    active = readFile('activesvc.txt').trim()
 	    if (active == "tasks-green") {
 	      dest = "tasks-blue"
@@ -91,21 +91,21 @@ stage('Integration Test') {
 	
 	    // Patch the DeploymentConfig so that it points to
 	    // the latest ProdReady-${version} Image.
-	    // Replace xyz-tasks-dev1 and xyz-tasks-prod with
+	    // Replace xyz-tasks-dev1 and xyz-tasks-prod1 with
 	    // your project names.
-	    sh "oc patch dc ${dest} --patch '{\"spec\": { \"triggers\": [ { \"type\": \"ImageChange\", \"imageChangeParams\": { \"containerNames\": [ \"$dest\" ], \"from\": { \"kind\": \"ImageStreamTag\", \"namespace\": \"xyz-tasks-dev1\", \"name\": \"tasks:ProdReady-$version\"}}}]}}' -n xyz-tasks-prod"
+	    sh "oc patch dc ${dest} --patch '{\"spec\": { \"triggers\": [ { \"type\": \"ImageChange\", \"imageChangeParams\": { \"containerNames\": [ \"$dest\" ], \"from\": { \"kind\": \"ImageStreamTag\", \"namespace\": \"xyz-tasks-dev1\", \"name\": \"tasks:ProdReady-$version\"}}}]}}' -n xyz-tasks-prod1"
 	
-	    openshiftDeploy depCfg: dest, namespace: 'xyz-tasks-prod', verbose: 'false', waitTime: '', waitUnit: 'sec'
-	    openshiftVerifyDeployment depCfg: dest, namespace: 'xyz-tasks-prod', replicaCount: '1', verbose: 'false', verifyReplicaCount: 'true', waitTime: '', waitUnit: 'sec'
-	    //openshiftVerifyService namespace: 'xyz-tasks-prod', svcName: dest, verbose: 'false'
+	    openshiftDeploy depCfg: dest, namespace: 'xyz-tasks-prod1', verbose: 'false', waitTime: '', waitUnit: 'sec'
+	    openshiftVerifyDeployment depCfg: dest, namespace: 'xyz-tasks-prod1', replicaCount: '1', verbose: 'false', verifyReplicaCount: 'true', waitTime: '', waitUnit: 'sec'
+	    //openshiftVerifyService namespace: 'xyz-tasks-prod1', svcName: dest, verbose: 'false'
 	  }
 	  stage('Switch over to new Version') {
 	    input "Switch Production?"
 	
-	    // Replace xyz-tasks-prod with the name of your
+	    // Replace xyz-tasks-prod1 with the name of your
 	    // production project
-	    sh 'oc patch route tasks -n xyz-tasks-prod -p \'{"spec":{"to":{"name":"' + dest + '"}}}\''
-	    sh 'oc get route tasks -n xyz-tasks-prod > oc_out.txt'
+	    sh 'oc patch route tasks -n xyz-tasks-prod1 -p \'{"spec":{"to":{"name":"' + dest + '"}}}\''
+	    sh 'oc get route tasks -n xyz-tasks-prod1 > oc_out.txt'
 	    oc_out = readFile('oc_out.txt')
 	    echo "Current route configuration: " + oc_out
 	  }}
