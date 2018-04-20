@@ -32,7 +32,7 @@ stage('Unit Tests') {
 node {
   stage('JIRA') {
     // Look at IssueInput class for more information.
-  jiraComment body: 'Test Case Executed Successfully', issueKey: '10000'
+  jiraComment body: 'test case executed successfully', issueKey: '10000'
  
   }
 }
@@ -135,6 +135,6 @@ def notifySuccessful() {
       subject: "SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
       body: """<p>SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
         <p>Check console output at "<a href="${env.BUILD_URL}">${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>"</p>""",
-      recipientProviders: [[$class: 'RequesterRecipientProvider']],to:'k.sainagarjuna9@gmail.com'
+      recipientProviders: [[$class: 'RequesterRecipientProvider']],to:'k.sainagarjuna11@gmail.com'
     )
 }
